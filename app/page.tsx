@@ -9,6 +9,9 @@ import { Separator } from '@/components/ui/separator';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { MessageBubble } from '@/components/message-bubble';
 import { TypingIndicator } from '@/components/typing-indicator';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBook, faCartShopping, faSearch, faFaceGrinWide, faCalendarCheck } from '@fortawesome/free-solid-svg-icons'
+
 import { 
   Send, 
   Bot, 
@@ -28,6 +31,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import { useTheme } from 'next-themes';
 
 const categoryIcons: Record<string, any> = {
   shopping: ShoppingCart,
@@ -39,12 +43,12 @@ const categoryIcons: Record<string, any> = {
 };
 
 const categoryColors: Record<string, string> = {
-  shopping: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200',
-  quotes: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-200',
-  thoughts: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-200',
-  goals: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200',
-  reminders: 'bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-200',
-  general: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-200',
+  shopping: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200',
+  quotes: 'bg-gray-100 text-gray-800 dark:bg-gray-800/30 dark:text-gray-200',
+  thoughts: 'bg-green-200 text-green-900 dark:bg-green-800/30 dark:text-green-300',
+  goals: 'bg-gray-200 text-gray-900 dark:bg-gray-700/30 dark:text-gray-300',
+  reminders: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-200',
+  general: 'bg-gray-100 text-gray-800 dark:bg-gray-800/30 dark:text-gray-200',
 };
 
 interface Message {
@@ -65,6 +69,8 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isTyping, setIsTyping] = useState(false);
+  const [hoveredPrompt, setHoveredPrompt] = useState<number | null>(null);
+  const { theme } = useTheme();
 
   const { ref: headerRef, inView: headerInView } = useInView({
     threshold: 0.1,
@@ -220,18 +226,66 @@ export default function Home() {
   };
 
   const quickPrompts = [
-    { text: "Remind me to buy milk and eggs", icon: ShoppingCart, category: "shopping" },
-    { text: "What's in my shopping list?", icon: Search, category: "query" },
-    { text: "I had an interesting thought today", icon: Brain, category: "thoughts" },
-    { text: "Show me my reminders", icon: Calendar, category: "query" },
+    { 
+      text: "Remind me to buy milk and eggs", 
+      icon: (isHovered: boolean, isDark: boolean) => (
+        <FontAwesomeIcon 
+          icon={faCartShopping} 
+          style={{ 
+            color: isDark ? (isHovered ? "#000000" : "#EEEEEE") : "#000000", 
+            fontSize: "20px" 
+          }} 
+        />
+      ), 
+      category: "shopping" 
+    },
+    { 
+      text: "What's in my shopping list?", 
+      icon: (isHovered: boolean, isDark: boolean) => (
+        <FontAwesomeIcon 
+          icon={faSearch} 
+          style={{ 
+            color: isDark ? (isHovered ? "#000000" : "#EEEEEE") : "#000000", 
+            fontSize: "20px" 
+          }} 
+        />
+      ), 
+      category: "query" 
+    },
+    { 
+      text: "I had an interesting thought today", 
+      icon: (isHovered: boolean, isDark: boolean) => (
+        <FontAwesomeIcon 
+          icon={faFaceGrinWide} 
+          style={{ 
+            color: isDark ? (isHovered ? "#000000" : "#EEEEEE") : "#000000", 
+            fontSize: "20px" 
+          }} 
+        />
+      ), 
+      category: "thoughts" 
+    },
+    { 
+      text: "Show me my reminders", 
+      icon: (isHovered: boolean, isDark: boolean) => (
+        <FontAwesomeIcon 
+          icon={faCalendarCheck} 
+          style={{ 
+            color: isDark ? (isHovered ? "#000000" : "#EEEEEE") : "#000000", 
+            fontSize: "20px" 
+          }} 
+        />
+      ), 
+      category: "query" 
+    },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FDF0D5] via-[#669BBC]/20 to-[#003049]/30 dark:from-[#003049] dark:via-[#669BBC]/20 dark:to-[#780000]/20">
+    <div className="min-h-screen bg-gradient-to-br from-[#EEEEEE] via-[#08CB00]/20 to-[#000000]/30 dark:from-[#000000] dark:via-[#08CB00]/20 dark:to-[#08CB00]/30">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <MotionDiv
-          className="absolute -top-4 -right-4 w-96 h-96 bg-gradient-to-br from-[#669BBC]/20 to-[#C1121F]/20 rounded-full blur-3xl"
+          className="absolute -top-4 -right-4 w-96 h-96 bg-gradient-to-br from-[#08CB00]/20 to-[#000000]/20 dark:from-[#08CB00]/20 dark:to-[#EEEEEE]/20 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
             rotate: [0, 180, 360],
@@ -243,7 +297,7 @@ export default function Home() {
           }}
         />
         <MotionDiv
-          className="absolute -bottom-4 -left-4 w-96 h-96 bg-gradient-to-tr from-[#003049]/20 to-[#780000]/20 rounded-full blur-3xl"
+          className="absolute -bottom-4 -left-4 w-96 h-96 bg-gradient-to-tr from-[#000000]/20 to-[#08CB00]/20 dark:from-[#08CB00]/30 dark:to-[#000000]/20 rounded-full blur-3xl"
           animate={{
             scale: [1.2, 1, 1.2],
             rotate: [360, 180, 0],
@@ -263,22 +317,25 @@ export default function Home() {
           initial={{ y: -50, opacity: 0 }}
           animate={headerInView ? { y: 0, opacity: 1 } : {}}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="border-b bg-[#FDF0D5]/90 dark:bg-[#003049]/90 backdrop-blur-xl sticky top-0 z-20 border-[#669BBC]/30 dark:border-[#669BBC]/30"
+          className="border-b bg-[#EEEEEE]/90 dark:bg-[#000000]/90 backdrop-blur-xl sticky top-0 z-20 border-[#08CB00]/30 dark:border-[#08CB00]/30"
         >
           <div className="container mx-auto max-w-4xl px-4 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <MotionDiv
-                className="bg-gradient-to-br from-[#669BBC] to-[#003049] p-2 rounded-xl shadow-lg"
+                className="bg-[#4C585B] p-2 rounded-xl shadow-lg"
                 whileHover={{ scale: 1.05, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <BookOpen className="h-6 w-6 text-[#FDF0D5]" />
+               <FontAwesomeIcon
+                icon={faBook}
+                style={{ color: "#5aec55" }}
+              />
               </MotionDiv>
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-[#669BBC] to-[#003049] bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-[#08CB00] to-[#000000] dark:from-[#08CB00] dark:to-[#EEEEEE] bg-clip-text text-transparent">
                   Journal Chat
                 </h1>
-                <p className="text-sm text-[#003049]/70 dark:text-[#669BBC]/70">Your intelligent journal companion</p>
+                <p className="text-sm text-[#000000]/70 dark:text-[#EEEEEE]/70">Your intelligent journal companion</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -293,7 +350,7 @@ export default function Home() {
         <div className="flex-1 overflow-hidden">
           <div className="container mx-auto h-full max-w-4xl p-4">
             <MotionCard 
-              className="flex h-full flex-col shadow-2xl border-0 bg-[#FDF0D5]/95 dark:bg-[#003049]/95 backdrop-blur-xl border border-[#669BBC]/20 dark:border-[#669BBC]/20"
+              className="flex h-full flex-col shadow-2xl border-0 bg-[#EEEEEE]/95 dark:bg-[#000000]/95 backdrop-blur-xl border border-[#08CB00]/20 dark:border-[#08CB00]/20"
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
@@ -344,10 +401,10 @@ export default function Home() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.8 }}
                           >
-                            <h2 className="text-3xl font-bold text-[#003049] dark:text-[#FDF0D5] mb-2">
+                            <h2 className="text-3xl font-bold text-[#000000] dark:text-[#EEEEEE] mb-2">
                               Welcome to your Journal
                             </h2>
-                            <p className="text-lg text-[#669BBC] dark:text-[#669BBC]">
+                            <p className="text-lg text-[#08CB00] dark:text-[#08CB00]">
                               Start a conversation with your personal AI journal assistant
                             </p>
                           </MotionDiv>
@@ -373,10 +430,14 @@ export default function Home() {
                                 <Button
                                   variant="outline"
                                   onClick={() => setInput(prompt.text)}
-                                  className="w-full p-4 h-auto flex items-center gap-3 text-left bg-gradient-to-r from-[#FDF0D5] to-[#669BBC]/30 dark:from-[#003049]/50 dark:to-[#669BBC]/30 border-[#669BBC]/40 dark:border-[#669BBC]/40 hover:from-[#669BBC]/20 hover:to-[#C1121F]/20 dark:hover:from-[#669BBC]/30 dark:hover:to-[#C1121F]/20 transition-all duration-200"
+                                  onMouseEnter={() => setHoveredPrompt(index)}
+                                  onMouseLeave={() => setHoveredPrompt(null)}
+                                  className="w-full p-4 h-auto  rounded-2xl flex items-center gap-3 text-left bg-gradient-to-r from-[#EEEEEE] to-[#08CB00]/30 dark:from-[#000000]/50 dark:to-[#08CB00]/30 border-[#08CB00]/40 dark:border-[#08CB00]/40 hover:from-[#08CB00]/20 hover:to-[#000000]/20 dark:hover:from-[#08CB00]/30 dark:hover:to-[#EEEEEE]/20 transition-all duration-200 group"
                                 >
-                                  <prompt.icon className="h-5 w-5 text-[#003049] dark:text-[#669BBC] flex-shrink-0" />
-                                  <span className="text-sm text-[#003049] dark:text-[#FDF0D5]">{prompt.text}</span>
+                                  <div className="flex-shrink-0">
+                                    {prompt.icon(hoveredPrompt === index, theme === 'dark')}
+                                  </div>
+                                  <span className="text-sm text-[#000000] dark:text-[#EEEEEE] group-hover:text-[#000000] dark:group-hover:text-[#000000]">{prompt.text}</span>
                                 </Button>
                               </MotionDiv>
                             ))}
@@ -386,9 +447,9 @@ export default function Home() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 1.6 }}
-                            className="text-xs text-[#003049] dark:text-[#669BBC] bg-gradient-to-r from-[#FDF0D5] to-[#669BBC]/20 dark:from-[#003049]/30 dark:to-[#669BBC]/20 p-4 rounded-lg border border-[#669BBC]/30 dark:border-[#669BBC]/30"
+                            className="text-xs text-[#000000] dark:text-[#EEEEEE] bg-gradient-to-r from-[#EEEEEE] to-[#08CB00]/20 dark:from-[#000000]/30 dark:to-[#08CB00]/20 p-4 rounded-lg border border-[#08CB00]/30 dark:border-[#08CB00]/30"
                           >
-                            <p className="mb-2 font-medium text-[#C1121F] dark:text-[#669BBC]">💡 AI-Powered Features:</p>
+                            <p className="mb-2 font-medium text-[#08CB00] dark:text-[#08CB00]">💡 AI-Powered Features:</p>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-left">
                               <span>• Automatic categorization</span>
                               <span>• Smart tagging</span>
@@ -418,7 +479,7 @@ export default function Home() {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="border-t bg-red-50 dark:bg-red-950/20 p-4 text-sm text-red-700 dark:text-red-400 border-[#669BBC]/20"
+                      className="border-t bg-red-50 dark:bg-red-950/20 p-4 text-sm text-red-700 dark:text-red-400 border-[#08CB00]/20 dark:border-[#08CB00]/20"
                     >
                       <strong>Error:</strong> {error}
                     </MotionDiv>
@@ -440,21 +501,19 @@ export default function Home() {
                           value={input}
                           onChange={handleInputChange}
                           placeholder="Add an entry or ask about your journal..."
-                          className="pr-12 h-12 text-base bg-[#FDF0D5]/80 dark:bg-[#003049]/50 backdrop-blur-sm border-[#669BBC]/50 dark:border-[#669BBC]/50 focus:border-[#C1121F] dark:focus:border-[#669BBC] rounded-xl text-[#003049] dark:text-[#FDF0D5] placeholder:text-[#669BBC]/60 dark:placeholder:text-[#669BBC]/60"
+                          className="pr-12 h-12 text-base bg-[#EEEEEE]/80 dark:bg-[#000000]/50 backdrop-blur-sm border-[#08CB00]/50 dark:border-[#08CB00]/50 focus:border-[#08CB00] dark:focus:border-[#08CB00] rounded-xl text-[#000000] dark:text-[#EEEEEE] placeholder:text-[#08CB00]/60 dark:placeholder:text-[#08CB00]/60"
                           disabled={isLoading}
                         />
                         <MotionDiv
                           className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
                         >
                           <Button 
                             type="submit" 
                             size="icon"
                             disabled={isLoading || !input || !input.trim()}
-                            className="h-8 w-8 bg-gradient-to-r from-[#669BBC] to-[#003049] hover:from-[#669BBC]/90 hover:to-[#003049]/90 rounded-lg shadow-lg transition-none"
+                            className="h-8 w-8 bg-gradient-to-r from-[#08CB00] to-[#08CB00] dark:from-[#08CB00] dark:to-[#08CB00] hover:from-[#06A500] hover:to-[#06A500] dark:hover:from-[#0AE000] dark:hover:to-[#0AE000] rounded-lg shadow-lg transition-colors duration-200 disabled:from-gray-400 disabled:to-gray-400 dark:disabled:from-gray-600 dark:disabled:to-gray-600"
                           >
-                            <Send className="h-4 w-4 text-[#FDF0D5]" />
+                            <Send className="h-4 w-4 text-[#000000] dark:text-[#000000]" />
                           </Button>
                         </MotionDiv>
                       </div>
@@ -465,7 +524,7 @@ export default function Home() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.5 }}
-                        className="flex flex-wrap gap-2 text-xs text-[#669BBC] dark:text-[#669BBC]"
+                        className="flex flex-wrap gap-2 text-xs text-[#08CB00] dark:text-[#08CB00]"
                       >
                         <span>Quick start:</span>
                         {quickPrompts.slice(0, 2).map((prompt, index) => (
@@ -473,7 +532,7 @@ export default function Home() {
                             <button 
                               type="button" 
                               onClick={() => setInput(prompt.text)}
-                              className="hover:text-[#C1121F] dark:hover:text-[#C1121F] underline transition-colors"
+                              className="hover:text-[#000000] dark:hover:text-[#EEEEEE] underline transition-colors"
                             >
                               {prompt.text.split(' ').slice(0, 3).join(' ')}...
                             </button>
