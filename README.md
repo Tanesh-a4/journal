@@ -35,8 +35,8 @@ GEMINI_API_KEY=your_gemini_api_key_here
 GEMINI_MODEL=gemini-1.5-flash
 ```
 
-   **Note:** The default model is `gemini-1.5-flash` which is available in the free tier. You can also use `gemini-1.5-pro` if you have access to it.
-
+   **Note:** The default model is `gemini-2.5-flash` which is available in the free tier. You can also use `gemini-2.5-pro` if you have access to it.
+   also run the 1.js file for listing all avaible models
 4. Run the development server:
 ```bash
 npm run dev
